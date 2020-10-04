@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "483710749012",
+    "firebase_url": "https://fcm-notifications-ae4a4.firebaseio.com",
+    "project_id": "fcm-notifications-ae4a4",
+    "storage_bucket": "fcm-notifications-ae4a4.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:483710749012:android:7a656cb195901afca8e0c1",
+        "android_client_info": {
+          "package_name": "com.example.android.eggtimernotifications"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "483710749012-3mgvqdd3gtm9v7ld6cio1ujac72c6muk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDoml8rb1BKDZx1lbSMILY0_xBokmA0DJs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "483710749012-3mgvqdd3gtm9v7ld6cio1ujac72c6muk.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
