@@ -7,6 +7,14 @@
         android:title="@string/normal_map"
         app:showAsAction="never" />
     <item
+        android:id="@+id/classic_map"
+        android:title="@string/classic_map"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/night_map"
+        android:title="@string/night_map"
+        app:showAsAction="never" />
+    <item
         android:id="@+id/hybrid_map"
         android:title="@string/hybrid_map"
         app:showAsAction="never" />

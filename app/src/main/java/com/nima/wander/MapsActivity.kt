@@ -20,6 +20,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private val TAG = MapsActivity::class.java.simpleName
     private lateinit var map: GoogleMap
 
+    private var mapStyle : Int = R.raw.classic
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_maps)
@@ -63,6 +65,16 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
         R.id.normal_map -> {
+            map.mapType = GoogleMap.MAP_TYPE_NORMAL
+            true
+        }
+        R.id.classic_map -> {
+            mapStyle = R.raw.classic
+            map.mapType = GoogleMap.MAP_TYPE_NORMAL
+            true
+        }
+        R.id.night_map -> {
+            mapStyle = R.raw.night
             map.mapType = GoogleMap.MAP_TYPE_NORMAL
             true
         }
@@ -114,7 +126,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             val success = map.setMapStyle(
                 MapStyleOptions.loadRawResourceStyle(
                     this,
-                    R.raw.map_style
+                    mapStyle
                 )
             )
             if (!success)
