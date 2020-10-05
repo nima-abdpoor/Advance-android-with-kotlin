@@ -10,6 +10,7 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import java.util.*
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
@@ -35,11 +36,18 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
      */
     override fun onMapReady(googleMap: GoogleMap) {
         map = googleMap
-
-        // Add a marker in Sydney and move the camera
-        val sydney = LatLng(-34.0, 151.0)
-        map.addMarker(MarkerOptions().position(sydney).title("Marker in Sydney"))
-        map.moveCamera(CameraUpdateFactory.newLatLng(sydney))
+//        // Add a marker in Sydney and move the camera
+//        val sydney = LatLng(-34.0, 151.0)
+//        map.addMarker(MarkerOptions().position(sydney).title("Marker in Sydney"))
+//        map.moveCamera(CameraUpdateFactory.newLatLng(sydney))
+        val latitude =35.692341
+        val longitude = 51.440097
+        val homeLatLng = LatLng(latitude,longitude)
+        val zoomLevel = 15f
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(homeLatLng,zoomLevel))
+        map.addMarker(MarkerOptions().position(homeLatLng))
+        setMapLongClick(map)
+        setPoiClickListener(map)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -66,5 +74,31 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             true
         }
         else -> super.onOptionsItemSelected(item)
+    }
+    private fun setMapLongClick(map : GoogleMap){
+        map.setOnMapLongClickListener {LatLng ->
+            val snippets = String.format(
+                Locale.getDefault(),
+                "Lat: %1$.5f, Long: %2$.5f",
+                LatLng.latitude,
+                LatLng.longitude
+            )
+            map.addMarker(
+                MarkerOptions()
+                    .position(LatLng)
+                    .title(getString(R.string.dropped_pin))
+                    .snippet(snippets)
+            )
+        }
+    }
+    private fun setPoiClickListener(map : GoogleMap){
+        map.setOnPoiClickListener{poi ->
+            val poiMarker =map.addMarker(
+                MarkerOptions()
+                    .position(poi.latLng)
+                    .title(poi.name)
+            )
+            poiMarker.showInfoWindow()
+        }
     }
 }
