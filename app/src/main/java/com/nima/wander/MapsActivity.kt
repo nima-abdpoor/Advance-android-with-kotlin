@@ -1,20 +1,28 @@
 package com.nima.wander
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.content.res.Resources
-import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.*
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MapStyleOptions
+import com.google.android.gms.maps.model.MarkerOptions
 import java.util.*
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
+
+    private val REQUEST_LOCATION_PERMISSION = 1
 
     private val TAG = MapsActivity::class.java.simpleName
     private lateinit var map: GoogleMap
@@ -54,6 +62,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         setMapLongClick(map)
         setPoiClickListener(map)
         setMapStyle(map)
+        enableMyLocation()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -68,13 +77,14 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             true
         }
         R.id.classic_map -> {
-            mapStyle = R.raw.classic
+            mapStyle = 1
             map.mapType = GoogleMap.MAP_TYPE_NORMAL
             true
         }
         R.id.night_map -> {
-            mapStyle = R.raw.night
+            mapStyle = 0
             map.mapType = GoogleMap.MAP_TYPE_NORMAL
+            setMapStyle(map)
             true
         }
         R.id.hybrid_map -> {
@@ -123,6 +133,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun setMapStyle(map: GoogleMap) {
+        mapStyle = when(mapStyle){
+            1 -> R.raw.night
+            else -> R.raw.classic
+        }
         try {
             val success = map.setMapStyle(
                 MapStyleOptions.loadRawResourceStyle(
@@ -135,6 +149,52 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         } catch (e: Resources.NotFoundException) {
             Log.e(TAG, "Can't find style. Error: ", e)
 
+        }
+    }
+    private fun isPermissionGranted() : Boolean{
+        return ContextCompat.checkSelfPermission(
+            this,android.Manifest.permission.ACCESS_FINE_LOCATION
+        ) === PackageManager.PERMISSION_GRANTED
+    }
+    private fun enableMyLocation(){
+        if (isPermissionGranted()){
+            if (ActivityCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                return
+            }
+            map.setMyLocationEnabled(true)
+        }
+        else{
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf<String>(Manifest.permission.ACCESS_FINE_LOCATION),
+                REQUEST_LOCATION_PERMISSION
+            )
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        if (requestCode == REQUEST_LOCATION_PERMISSION) {
+            if (grantResults.isNotEmpty() && (grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                enableMyLocation()
+            }
         }
     }
 }
