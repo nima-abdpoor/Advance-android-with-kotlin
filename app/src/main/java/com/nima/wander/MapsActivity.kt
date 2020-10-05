@@ -1,6 +1,8 @@
 package com.nima.wander
 
+import android.content.res.Resources
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
@@ -9,11 +11,13 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.android.gms.maps.model.MarkerOptions
 import java.util.*
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
+    private val TAG = MapsActivity::class.java.simpleName
     private lateinit var map: GoogleMap
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,14 +44,15 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 //        val sydney = LatLng(-34.0, 151.0)
 //        map.addMarker(MarkerOptions().position(sydney).title("Marker in Sydney"))
 //        map.moveCamera(CameraUpdateFactory.newLatLng(sydney))
-        val latitude =35.692341
+        val latitude = 35.692341
         val longitude = 51.440097
-        val homeLatLng = LatLng(latitude,longitude)
+        val homeLatLng = LatLng(latitude, longitude)
         val zoomLevel = 15f
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(homeLatLng,zoomLevel))
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(homeLatLng, zoomLevel))
         map.addMarker(MarkerOptions().position(homeLatLng))
         setMapLongClick(map)
         setPoiClickListener(map)
+        setMapStyle(map)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -75,8 +80,9 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         }
         else -> super.onOptionsItemSelected(item)
     }
-    private fun setMapLongClick(map : GoogleMap){
-        map.setOnMapLongClickListener {LatLng ->
+
+    private fun setMapLongClick(map: GoogleMap) {
+        map.setOnMapLongClickListener { LatLng ->
             val snippets = String.format(
                 Locale.getDefault(),
                 "Lat: %1$.5f, Long: %2$.5f",
@@ -91,14 +97,31 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             )
         }
     }
-    private fun setPoiClickListener(map : GoogleMap){
-        map.setOnPoiClickListener{poi ->
-            val poiMarker =map.addMarker(
+
+    private fun setPoiClickListener(map: GoogleMap) {
+        map.setOnPoiClickListener { poi ->
+            val poiMarker = map.addMarker(
                 MarkerOptions()
                     .position(poi.latLng)
                     .title(poi.name)
             )
             poiMarker.showInfoWindow()
+        }
+    }
+
+    private fun setMapStyle(map: GoogleMap) {
+        try {
+            val success = map.setMapStyle(
+                MapStyleOptions.loadRawResourceStyle(
+                    this,
+                    R.raw.map_style
+                )
+            )
+            if (!success)
+                Log.d(TAG, "setMapStyle: style parsing failed")
+        } catch (e: Resources.NotFoundException) {
+            Log.e(TAG, "Can't find style. Error: ", e)
+
         }
     }
 }
